@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="5">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SentinelSSH Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#0b1120;
+    color:white;
+    display:flex;
+}
+
+/* Sidebar */
+
+.sidebar{
+    width:240px;
+    min-height:100vh;
+    background:#111827;
+    padding:25px;
+    border-right:1px solid rgba(255,255,255,0.08);
+}
+
+.logo{
+    font-size:26px;
+    font-weight:bold;
+    color:#38bdf8;
+    margin-bottom:40px;
+}
+
+.menu{
+    list-style:none;
+}
+
+.menu li{
+    padding:14px;
+    margin-bottom:10px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.menu li:hover{
+    background:#1e293b;
+}
+
+.menu .active{
+    background:#1e293b;
+    color:#38bdf8;
+}
+
+/* Main */
+
+.main{
+    flex:1;
+    padding:25px;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.header h1{
+    font-size:40px;
+    color:#38bdf8;
+}
+
+.header p{
+    color:#94a3b8;
+}
+
+/* Alert */
+
+.alert{
+    background:rgba(239,68,68,0.15);
+    border-left:5px solid #ef4444;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+/* Cards */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.card {
+    background: rgba(10,20,45,0.95);
+    border-radius: 18px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    transition: 0.3s ease;
+}
+
+.card:hover{
+    transform: translateY(-5px);
+}
+
+.total-card{
+    border-left:4px solid #26c6ff;
+    box-shadow:
+        0 0 10px rgba(38,198,255,.5),
+        0 0 20px rgba(38,198,255,.3);
+}
+.high-card{
+    border-left:4px solid #ff4d4d;
+    box-shadow:
+        0 0 12px rgba(255,77,77,.6),
+        0 0 25px rgba(255,77,77,.3);
+}
+.medium-card{
+    border-left:4px solid #ffb300;
+    box-shadow:
+        0 0 12px rgba(255,179,0,.6),
+        0 0 25px rgba(255,179,0,.3);
+}
+.medium-card{
+    border-left:4px solid #ffb300;
+    box-shadow:
+        0 0 12px rgba(255,179,0,.6),
+        0 0 25px rgba(255,179,0,.3);
+}
+.total{
+    border-left:6px solid #38bdf8;
+}
+
+.high{
+    border-left:6px solid #ef4444;
+}
+
+.medium{
+    border-left:6px solid #f59e0b;
+}
+
+.low{
+    border-left:6px solid #22c55e;
+}
+
+/* Charts */
+
+.top-charts{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.chart-box{
+    background:#111827;
+    border-radius:18px;
+    padding:20px;
+}
+
+.chart-box h3{
+    margin-bottom:15px;
+}
+
+.bottom-chart{
+    background:#111827;
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:25px;
+}
+
+
+.chart-container{
+    background: linear-gradient(
+        145deg,
+        rgba(15,25,50,.95),
+        rgba(10,18,40,.95)
+    );
+
+    border-radius:20px;
+
+    box-shadow:
+        0 0 20px rgba(0,150,255,.15),
+        inset 0 0 30px rgba(0,150,255,.05);
+}
+
+.top-charts-full{
+    margin-bottom:20px;
+}
+
+.top-charts-full .chart-box{
+    width:100%;
+}
+
+/* Table */
+
+.table-container{
+    background:#111827;
+    border-radius:18px;
+    overflow:hidden;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#1e293b;
+    padding:18px;
+    color:#cbd5e1;
+}
+
+td{
+    padding:15px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+tbody tr:hover{
+    background:#1e3a5f;
+    transition:.3s;
+}
+
+.badge-high{
+    background:#ef4444;
+    padding:7px 14px;
+    border-radius:20px;
+}
+
+.badge-medium{
+    background:#f59e0b;
+    padding:7px 14px;
+    border-radius:20px;
+}
+
+.badge-low{
+    background:#22c55e;
+    padding:7px 14px;
+    border-radius:20px;
+}
+
+canvas{
+    max-height:320px;
+}
+.bottom-section{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+    margin-top:20px;
+}
+
+.table-container{
+    background:#111827;
+    border-radius:18px;
+    overflow:hidden;
+
+    box-shadow:
+        0 0 20px rgba(0,150,255,.12);
+}
+
+.risk-box{
+    background:#111827;
+    border-radius:18px;
+    padding:20px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:
+        0 0 20px rgba(0,255,255,.08);
+}
+
+.meter-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+}
+
+.meter-circle{
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:conic-gradient(
+        #ef4444 0deg 180deg,
+        #f59e0b 180deg 270deg,
+        #22c55e 270deg 360deg
+    );
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+}
+
+.meter-circle::before{
+    content:'';
+    position:absolute;
+    width:150px;
+    height:150px;
+    background:#111827;
+    border-radius:50%;
+}
+
+.meter-value{
+    position:relative;
+    z-index:10;
+    font-size:40px;
+    font-weight:bold;
+}
+
+.meter-status{
+    position:absolute;
+    bottom:35px;
+    z-index:10;
+    font-size:14px;
+    color:#cbd5e1;
+}
+
+.details-row{
+    display:none;
+    background:#162033;
+}
+
+.details-row td{
+    text-align:left;
+    padding:20px;
+}
+
+.main-row{
+    cursor:pointer;
+}
+
+.risk-box{
+    width:400px;
+    height:300px;
+    background:#0d1730;
+    border-radius:20px;
+    padding:20px;
+
+    box-shadow:
+        0 0 20px rgba(0,255,255,.08);
+}
+
+#riskChart{
+    width:250px !important;
+    height:250px !important;
+}
+
+.chart-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+#timeFilter{
+    background:#1e293b;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:10px;
+    cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">🛡 SentinelSSH</div>
+
+    <ul class="menu">
+        <li class="active">Dashboard</li>
+        <li>Threat Monitor</li>
+        <li>Attack Analytics</li>
+        <li>SSH Logs</li>
+        <li>Blocked IPs</li>
+        <li>Settings</li>
+    </ul>
+
+</div>
+
+<div class="main">
+
+    <div class="header">
+        <h1>SentinelSSH</h1>
+        <p>Real-Time SSH Brute Force Detection & Threat Intelligence Dashboard</p>
+    </div>
+
+    {% for attack in attacks %}
+        {% if attack.attempts > 50 %}
+        <div class="alert">
+            ⚠ Critical Alert: {{ attack.ip }} generated
+            {{ attack.attempts }} failed SSH login attempts.
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    <div class="cards">
+
+        <div class="card total">
+            <h3>Total Threats</h3>
+            <h2>{{ attacks|length }}</h2>
+        </div>
+
+        <div class="card high">
+            <h3>High Risk</h3>
+            <h2>{{ attacks|selectattr("risk_level","equalto","HIGH")|list|length }}</h2>
+        </div>
+
+        <div class="card medium">
+            <h3>Medium Risk</h3>
+            <h2>{{ attacks|selectattr("risk_level","equalto","MEDIUM")|list|length }}</h2>
+        </div>
+
+        <div class="card low">
+            <h3>Low Risk</h3>
+            <h2>{{ attacks|selectattr("risk_level","equalto","LOW")|list|length }}</h2>
+        </div>
+
+    </div>
+
+    <div class="chart-box">
+
+    <div class="chart-header">
+
+            <h3>Threat Trend Analysis</h3>
+
+            <select id="timeFilter">
+                <option>Last 24 Hours</option>
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
+            </select>
+
+        </div>
+
+        <canvas id="trendChart"></canvas>
+
+    </div>
+
+    <div class="bottom-section">
+
+    <div class="table-container">
+
+        <h3 style="padding:20px;">
+            Failed SSH Login Attempts
+        </h3>
+
+        <table>
+
+            <thead>
+            ...
+            </thead>
+
+            <tbody>
+            ...
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>    
+        
+
+            <div class="risk-box">
+
+                <h3>Risk Distribution</h3>
+
+                <canvas id="riskChart"></canvas>
+
+            </div>
+
+            </div>
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>Source IP</th>
+                <th>Username</th>
+                <th>Failed Attempts</th>
+                <th>Rapid Attempts</th>
+                <th>Risk Score</th>
+                <th>Threat Level</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            {% for attack in attacks %}
+
+            <tr class="main-row">
+
+                <td>{{ attack.ip }}</td>
+                <td>{{ attack.usernames|join(', ') }}</td>
+                <td>{{ attack.attempts }}</td>
+                <td>{{ attack.rapid_attempts }}</td>
+                <td>{{ attack.risk_score }}</td>
+
+                <td>
+
+                {% if attack.risk_level=="HIGH" %}
+                    <span class="badge-high">CRITICAL</span>
+
+                {% elif attack.risk_level=="MEDIUM" %}
+                    <span class="badge-medium">WARNING</span>
+
+                {% else %}
+                    <span class="badge-low">SAFE</span>
+                {% endif %}
+
+                </td>
+
+            </tr>
+
+            <tr class="details-row">
+
+            <td colspan="6">
+
+            <h4>Attack Intelligence</h4>
+
+            <br>
+
+            <b>Attack Type:</b>
+            SSH Brute Force Attack
+
+            <br><br>
+
+            <b>Description:</b>
+            Multiple authentication attempts detected
+            against SSH service.
+
+            <br><br>
+
+            <b>Recommended Actions:</b>
+
+            <ul style="margin-top:10px; margin-left:20px;">
+            <li>Block suspicious IP address</li>
+            <li>Enable Fail2Ban</li>
+            <li>Use SSH key authentication</li>
+            <li>Disable root login</li>
+            <li>Monitor authentication logs</li>
+            </ul>
+
+            </td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const attacks = {{ attacks|tojson }};
+
+const high =
+attacks.filter(a=>a.risk_level==="HIGH").length;
+
+const medium =
+attacks.filter(a=>a.risk_level==="MEDIUM").length;
+
+const low =
+attacks.filter(a=>a.risk_level==="LOW").length;
+
+
+
+new Chart(
+document.getElementById('riskChart'),
+{
+type:'pie',
+data:{
+labels:['HIGH','MEDIUM','LOW'],
+datasets:[{
+data:[high,medium,low],
+backgroundColor:[
+'#ef4444',
+'#f59e0b',
+'#22c55e'
+]
+}]
+},
+options:{
+plugins:{
+legend:{
+labels:{
+color:'white'
+}
+}
+}
+}
+}
+);
+
+/* Line Chart */
+
+new Chart(
+document.getElementById('trendChart'),
+{
+type:'line',
+data:{
+labels: attacks.map(a=>a.timestamp),
+datasets:[{
+label:'Threat Score',
+data:attacks.map(a=>a.risk_score),
+borderColor:'#38bdf8',
+backgroundColor:'rgba(56,189,248,.2)',
+fill:true,
+tension:0.4
+}]
+},
+options:{
+plugins:{
+legend:{
+labels:{
+color:'white'
+}
+}
+},
+scales:{
+x:{
+ticks:{color:'white'}
+},
+y:{
+ticks:{color:'white'}
+}
+}
+}
+}
+);
+
+document.querySelectorAll('.main-row')
+.forEach(row=>{
+
+    row.addEventListener('click',()=>{
+
+        const details =
+        row.nextElementSibling;
+
+        if(details.style.display==="table-row")
+            details.style.display="none";
+        else
+            details.style.display="table-row";
+
+    });
+
+});
+
+const dropdown = document.getElementById("timeFilter");
+
+dropdown.addEventListener("change", () => {
+    dropdown.blur(); // closes dropdown after selection
+});
+
+</script>
+
+</body>
+</html>
+
