@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>SSH Brute Force Dashboard</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            margin: 30px;
+        }
+
+        .card {
+            display: inline-block;
+            padding: 20px;
+            margin: 10px;
+            border: 1px solid #ccc;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+        }
+
+    
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+    }
+
+    h1, h2, h3 {
+        color: #38bdf8;
+    }
+
+    .card {
+        background: #1e293b;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background: #1e293b;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #334155;
+    }
+
+    th {
+        background: #0f172a;
+        color: #38bdf8;
+        text-transform: uppercase;
+        font-size: 13px;
+    }
+
+    tr:hover {
+        background: #334155;
+    }
+
+    .high {
+        color: #ef4444;
+        font-weight: bold;
+    }
+
+    .medium {
+        color: #f59e0b;
+        font-weight: bold;
+    }
+
+    .low {
+        color: #22c55e;
+    }
+
+    .section {
+        padding: 20px;
+    }
+
+    .header {
+        background: linear-gradient(90deg, #0f172a, #1e293b);
+        padding: 15px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        color: #38bdf8;
+        border-bottom: 2px solid #38bdf8;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .value {
+        font-size: 26px;
+        font-weight: bold;
+        margin-top: 10px;
+        color: white;
+    }
+
+    /* Smooth animations */
+    * {
+        transition: all 0.2s ease-in-out;
+    }
+
+        
+    </style>
+
+        <meta http-equiv="refresh" content="5">
+
+</head>
+
+<body>
+
+    <h1>SSH Brute Force Dashboard</h1>
+
+    <div class="card">
+        <h3>Total Events</h3>
+        <h2>{{ data.total_events }}</h2>
+    </div>
+
+    <div class="card">
+        <h3>Total Alerts</h3>
+        <h2>{{ data.total_alerts }}</h2>
+    </div>
+
+    <div class="card">
+        <h3>Unique Attackers</h3>
+        <h2>{{ data.unique_attackers }}</h2>
+    </div>
+
+    <h2>Recent SSH Events</h2>
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <th>IP</th>
+            <th>Username</th>
+            <th>Event</th>
+            <th>Timestamp</th>
+        </tr>
+
+        {% for event in data.recent_events %}
+
+        <tr>
+            <td>{{ event[0] }}</td>
+            <td>{{ event[1] }}</td>
+            <td>{{ event[2] }}</td>
+            <td>{{ event[3] }}</td>
+            <td>{{ event[4] }}</td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    <h2>Alerts</h2>
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <th>IP</th>
+            <th>Attempts</th>
+            <th>Risk</th>
+        </tr>
+
+        {% for alert in data.alerts %}
+
+        <tr>
+            <td>{{ alert[0] }}</td>
+            <td>{{ alert[1] }}</td>
+            <td>{{ alert[2] }}</td>
+            <td>{{ alert[7] }}</td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+
+</body>
+</html>
